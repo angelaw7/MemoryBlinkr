@@ -1,24 +1,27 @@
 from flask import Flask, jsonify, request, send_from_directory
-from flask import jsonify
 import gridgame
+import paragraphGame
 
 from blink_detector.BlinkDetector import BlinkDetector
 
-global old_grid
+global old_grid, old_paragraph
 blink_detector = BlinkDetector()
 
 app = Flask(__name__)
 
 
 @app.route("/")
-def hello_world():
-    return send_from_directory("templates/", 'index.html')  
+def health_check():
+    return "<p>healthy!</p>"
 
-@app.route('/get-grid', methods=['POST'])
-def sendGridGame():
+
+@app.route("/get-grid", methods=["GET"])
+def getGrid():
+    """
+    Get a randomly generated grid
+    """
     global old_grid
-    grid_size = request.json['grid_size']
-    old_grid = gridgame.generateGrid(grid_size, grid_size)
+    old_grid = gridgame.generateGrid(5, 5)
     return jsonify(old_grid)
 
 
@@ -38,3 +41,16 @@ def compareGrids():
     """
     new_grid = request.get_json()
     return jsonify(gridgame.compareGrid(old_grid, new_grid))
+
+
+@app.route("/get-paragraph", methods=["POST"])
+def getParagraph():
+    global old_paragraph
+    old_paragraph = paragraphGame.generateParagraph(50)
+    return jsonify(old_paragraph)
+
+
+@app.route("/compare-paragraphs", methods=["POST"])
+def compareParagraphs():
+    new_paragraph = request.get_json()
+    paragraphGame.compareParagraph(old_paragraph, new_paragraph)
