@@ -1,9 +1,10 @@
 from flask import Flask, jsonify, request
 import gridgame
+import paragraphGame
 
 from blink_detector.BlinkDetector import BlinkDetector
 
-global old_grid
+global old_grid, old_paragraph
 blink_detector = BlinkDetector()
 
 app = Flask(__name__)
@@ -40,3 +41,15 @@ def compareGrids():
     """
     new_grid = request.get_json()
     return jsonify(gridgame.compareGrid(old_grid, new_grid))
+
+
+@app.route("/get-paragraph", methods=["POST"])
+def getParagraph():
+    global old_paragraph
+    old_paragraph = paragraphGenerator.generateParagraph(50)
+    return jsonify(old_paragraph)
+
+
+@app.route("/compare-paragraphs", methods=["POST"])
+def compareParagraphs():
+        #Todo

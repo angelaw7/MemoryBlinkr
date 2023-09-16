@@ -12,3 +12,7 @@ def generateParagraph(length):
                 max_tokens=length)
 
     paragraph = 'prediction: {}'.format(prediction.generations[0].text)
+    return paragraph
+
+def compareParagraph(p1, p2):
+        #compare paragraphs
