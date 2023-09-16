@@ -81,7 +81,8 @@
       original_grid = expected_grid;
       grid_container.appendChild(g);
 
-      awaitBlink();
+      //awaitBlink();
+      blink();
 
       async function awaitBlink() {
         await fetch("/await-blink", {
@@ -125,7 +126,8 @@
       });
       const submitButton = document.createElement("button");
       submitButton.textContent = "Check";
-      document.body.appendChild(submitButton);
+      submitButton.classList.add('check_btn')
+      grid_container.appendChild(submitButton);
 
       submitButton.addEventListener("click", () => {
         user_grid = blank_grid;
@@ -154,9 +156,22 @@
   </script>
 
   <style>
+
+    #grid_container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
     #grid {
       display: inline-grid;
       border: 1px solid #eee;
+    }
+
+    .check_btn {
+        width: 50px;
+
     }
 
     .row {
