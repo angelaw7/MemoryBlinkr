@@ -7,6 +7,7 @@ global old_grid, old_paragraph
 blink_detector = BlinkDetector()
 
 app = Flask(__name__)
+blink_detector.activate_cam()
 
 
 @app.route("/")
@@ -46,22 +47,18 @@ def compareGrids():
     """
     Compare the originally generated grid with the user submitted grid
     """
-    new_grid = request.get_json()
-    return jsonify(gridgame.compareGrid(old_grid, new_grid))
+    data = request.get_json()
+    return jsonify(gridgame.compareGrid(data["oldGrid"], data["newGrid"]))
 
 
-# @app.route("/get-paragraph", methods=["POST"])
-# def getParagraph():
-#     global old_paragraph
-#     old_paragraph = paragraphGame.generateParagraph(50)
-#     return jsonify(old_paragraph)
+@app.route("/get-paragraph", methods=["POST"])
+def getParagraph():
+    global old_paragraph
+    old_paragraph = paragraphGame.generateParagraph(50)
+    return jsonify(old_paragraph)
 
 
 @app.route("/compare-paragraphs", methods=["POST"])
 def compareParagraphs():
     new_paragraph = request.get_json()
     paragraphGame.compareParagraph(old_paragraph, new_paragraph)
-
-
-
-
