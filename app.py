@@ -1,9 +1,5 @@
-<<<<<<< HEAD
 from flask import Flask, jsonify, request, send_from_directory
-=======
-from flask import Flask, request, render_template
 from flask import jsonify
->>>>>>> 0809b6aba41e12a31538bde24d413ff3683b4349
 import gridgame
 
 from blink_detector.BlinkDetector import BlinkDetector
