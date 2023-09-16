@@ -1,161 +1,233 @@
 <html>
-  <body>
+
+<body>
     <div>
-      <button id="start_btn">Start</button>
+        <div class="body-container">
+            <div id="start-box" class="start_box">
+                <h1> Grid Game</h1>
+                <p> A memory matching game with a twist. Try not to blink!</p>
+                <button class="btn" id="start_btn">Start</button>
+            </div>
+        </div>
     </div>
     <div id="grid_container" class="hide"></div>
-  </body>
+</body>
 
-  <script>
+<script>
     let grid_container = document.getElementById("grid_container");
     const start_btn = document.getElementById("start_btn");
     const grid_width = 500;
 
     let level = 1;
+    start_page = document.getElementById("start-box");
     start_btn.addEventListener("click", (event) => {
-      start_btn.classList.add("hide");
-      newGame();
-      grid_container.classList.remove("hide");
+        start_page.classList.add("hide");
+        newGame();
+        grid_container.classList.remove("hide");
     });
     const colors = ["white", "black"];
     let original_grid = null;
     let user_grid = null;
 
     function newGame() {
-      const grid_size = level + 2;
-      async function getGrid(url = "", data = { grid_size: grid_size }) {
-        const response = await fetch(url, {
-          method: "POST",
-          mode: "cors",
-          cache: "no-cache",
-          credentials: "same-origin",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          redirect: "follow",
-          referrerPolicy: "no-referrer",
-          body: JSON.stringify(data),
-        });
-        let grid = response.json();
-        return grid;
-      }
+        const grid_size = level + 2;
+        async function getGrid(url = "", data = { grid_size: grid_size }) {
+            const response = await fetch(url, {
+                method: "POST",
+                mode: "cors",
+                cache: "no-cache",
+                credentials: "same-origin",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                redirect: "follow",
+                referrerPolicy: "no-referrer",
+                body: JSON.stringify(data),
+            });
+            let grid = response.json();
+            return grid;
+        }
 
-      getGrid("/get-grid").then((data) => {
-        currentGame(data);
-      });
+        getGrid("/get-grid").then((data) => {
+            currentGame(data);
+        });
     }
 
     function genID(i, j) {
-      return i.toString() + "-" + j.toString();
+        return i.toString() + "-" + j.toString();
     }
 
     function generateGrid(grid) {
-      const grid_el = document.createElement("div");
-      grid_el.setAttribute("id", "grid");
-      const length = grid.length;
-      for (let i = 0; i < length; i++) {
-        const row = document.createElement("div");
-        row.classList.add("row");
-        for (let j = 0; j < length; j++) {
-          const cell = document.createElement("div");
-          value_id = grid[i][j];
-          cell.style.backgroundColor = colors[value_id];
-          cell.classList.add("cell");
-          const cell_id = genID(i, j);
-          cell.setAttribute("id", cell_id);
-          cell.style.width = (grid_width / length).toString() + "px";
-          cell.style.height = (grid_width / length).toString() + "px";
-          row.appendChild(cell);
+        const grid_el = document.createElement("div");
+        grid_el.setAttribute("id", "grid");
+        const length = grid.length;
+        for (let i = 0; i < length; i++) {
+            const row = document.createElement("div");
+            row.classList.add("row");
+            for (let j = 0; j < length; j++) {
+                const cell = document.createElement("div");
+                value_id = grid[i][j];
+                cell.style.backgroundColor = colors[value_id];
+                cell.classList.add("cell");
+                const cell_id = genID(i, j);
+                cell.setAttribute("id", cell_id);
+                cell.style.width = (grid_width / length).toString() + "px";
+                cell.style.height = (grid_width / length).toString() + "px";
+                row.appendChild(cell);
+            }
+            grid_el.appendChild(row);
         }
-        grid_el.appendChild(row);
-      }
-      return grid_el;
+        return grid_el;
     }
 
     let expected_grid = [];
     let blank_grid = [];
     const hasBlinked = false;
     function currentGame(grid) {
-      expected_grid = grid;
-      const g = generateGrid(expected_grid);
-      original_grid = expected_grid;
-      grid_container.appendChild(g);
+        expected_grid = grid;
+        const g = generateGrid(expected_grid);
+        original_grid = expected_grid;
+        grid_container.appendChild(g);
 
-      //awaitBlink();
-      blink();
+        //awaitBlink();
+        blink();
 
-      async function awaitBlink() {
-        await fetch("/await-blink", {
-          method: "GET",
-          mode: "cors",
-          cache: "no-cache",
-          credentials: "same-origin",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          redirect: "follow",
-          referrerPolicy: "no-referrer",
-        }).then(() => {
-          blink();
-        });
-      }
+        async function awaitBlink() {
+            await fetch("/await-blink", {
+                method: "GET",
+                mode: "cors",
+                cache: "no-cache",
+                credentials: "same-origin",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                redirect: "follow",
+                referrerPolicy: "no-referrer",
+            }).then(() => {
+                blink();
+            });
+        }
     }
 
     function blink() {
-      grid_container.innerHTML = "";
-      length = expected_grid.length;
-      let blank_grid = [];
-      for (let i = 0; i < length; i++) {
-        row = [];
-        for (let j = 0; j < length; j++) {
-          row.push(0);
+        grid_container.innerHTML = "";
+        length = expected_grid.length;
+        let blank_grid = [];
+        for (let i = 0; i < length; i++) {
+            row = [];
+            for (let j = 0; j < length; j++) {
+                row.push(0);
+            }
+            blank_grid.push(row);
         }
-        blank_grid.push(row);
-      }
-      new_grid = generateGrid(blank_grid);
-      grid_container.appendChild(new_grid);
-      const grid_el = document.getElementById("grid");
-      grid_el.addEventListener("click", (event) => {
-        target = event.target;
-        target_id = target.id;
-        let [i, j] = target_id.split("-");
-        (i = parseInt(i)), (j = parseInt(j));
+        new_grid = generateGrid(blank_grid);
+        grid_container.appendChild(new_grid);
+        const grid_el = document.getElementById("grid");
+        grid_el.addEventListener("click", (event) => {
+            target = event.target;
+            target_id = target.id;
+            let [i, j] = target_id.split("-");
+            (i = parseInt(i)), (j = parseInt(j));
 
-        blank_grid[i][j] == 1 ? (blank_grid[i][j] = 0) : (blank_grid[i][j] = 1);
-        target.style.backgroundColor = colors[blank_grid[i][j]];
-      });
-      const submitButton = document.createElement("button");
-      submitButton.textContent = "Check";
-      submitButton.classList.add('check_btn')
-      grid_container.appendChild(submitButton);
-
-      submitButton.addEventListener("click", () => {
-        user_grid = blank_grid;
-        compareGrids().then((res) => {
-          console.log(res * 100); // score
+            blank_grid[i][j] == 1 ? (blank_grid[i][j] = 0) : (blank_grid[i][j] = 1);
+            target.style.backgroundColor = colors[blank_grid[i][j]];
         });
-      });
+        const submitButton = document.createElement("button");
+        submitButton.textContent = "Check";
+        submitButton.classList.add('check_btn')
+        submitButton.classList.add('btn')
+        grid_container.appendChild(submitButton);
 
-      async function compareGrids() {
-        const data = { oldGrid: original_grid, newGrid: user_grid };
-        const res = await fetch("/compare-grids", {
-          method: "POST",
-          mode: "cors",
-          cache: "no-cache",
-          credentials: "same-origin",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          redirect: "follow",
-          referrerPolicy: "no-referrer",
-          body: JSON.stringify(data),
+        submitButton.addEventListener("click", () => {
+            user_grid = blank_grid;
+            compareGrids().then((res) => {
+                console.log(res * 100); // score
+            });
         });
-        return res.json();
-      }
+
+        async function compareGrids() {
+            console.log(original_grid, user_grid)
+            const data = { oldGrid: original_grid, newGrid: user_grid };
+            const res = await fetch("/compare-grids", {
+                method: "POST",
+                mode: "cors",
+                cache: "no-cache",
+                credentials: "same-origin",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                redirect: "follow",
+                referrerPolicy: "no-referrer",
+                body: JSON.stringify(data),
+            });
+            return res.json();
+        }
     }
-  </script>
+</script>
 
-  <style>
+<style>
+    body {
+        font-family: 'Courier New', Courier, monospace
+    }
+
+    .body-container {
+        display: flex;
+        flex-direction: column;
+        justify-items: center;
+        align-items: center;
+    }
+
+    .start-container {
+        display: flex;
+        justify-content: center;
+
+
+    }
+
+    button {
+        background-color: #008080;
+        /* Teal */
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        font-weight: 200;
+        margin: 6px;
+        cursor:pointer;
+    }
+
+    .btn:hover {
+        background-color: #333;
+        transition: 0.3s;
+        cursor:pointer;
+    }
+
+
+    @keyframes fadeIn {
+        0% {
+            opacity: 0;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
+    @keyframes fadeIn-alt {
+        0% {
+            opacity: 0;
+        }
+
+        30% {
+            opacity: 0;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
 
     #grid_container {
         display: flex;
@@ -165,32 +237,28 @@
     }
 
     #grid {
-      display: inline-grid;
-      border: 1px solid #eee;
-    }
-
-    .check_btn {
-        width: 50px;
-
+        display: inline-grid;
+        border: 1px solid #eee;
     }
 
     .row {
-      width: 100%;
-      display: flex;
-      flex-direction: row;
-      margin: 0;
-      padding: 0;
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        margin: 0;
+        padding: 0;
     }
 
     .cell {
-      margin: 0;
-      padding: 0;
-      border: 1px solid #eee;
-      cursor: crosshair;
+        margin: 0;
+        padding: 0;
+        border: 1px solid #eee;
+        cursor: crosshair;
     }
 
     .hide {
-      display: none;
+        display: none;
     }
-  </style>
+</style>
+
 </html>
