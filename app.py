@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request, send_from_directory, redirect
 import gridgame
-# import paragraphGame
+
+import wordsGame
 from blink_detector.BlinkDetector import BlinkDetector
 
 global old_grid, old_paragraph
@@ -14,13 +15,21 @@ blink_detector.activate_cam()
 def health_check():
     return send_from_directory("templates/", "menu.html")
 
+
 @app.route("/grid-game")
 def loadGridPage():
     return send_from_directory("templates/", "index.html")
 
+
 @app.route("/image-game")
 def loadImagePage():
     return send_from_directory("templates/", "canvas.html")
+
+
+@app.route("/phrase-game")
+def loadPhrasePage():
+    return send_from_directory("templates/", "phrases.html")
+
 
 @app.route("/get-grid", methods=["POST"])
 def getGrid():
@@ -28,7 +37,7 @@ def getGrid():
     Get a randomly generated grid
     """
     global old_grid
-    grid_size = request.json['grid_size']
+    grid_size = request.json["grid_size"]
     old_grid = gridgame.generateGrid(grid_size, grid_size)
     return jsonify(old_grid)
 
@@ -51,14 +60,18 @@ def compareGrids():
     return jsonify(gridgame.compareGrid(data["oldGrid"], data["newGrid"]))
 
 
-@app.route("/get-paragraph", methods=["POST"])
-def getParagraph():
-    global old_paragraph
-    old_paragraph = paragraphGame.generateParagraph(50)
-    return jsonify(old_paragraph)
+@app.route("/get-phrase", methods=["POST"])
+def getPhrase():
+    topic = request.get_json()["topic"]
+    original_phrases = wordsGame.generatePhrase(topic)
+    return jsonify(original_phrases)
 
 
-@app.route("/compare-paragraphs", methods=["POST"])
-def compareParagraphs():
-    new_paragraph = request.get_json()
-    paragraphGame.compareParagraph(old_paragraph, new_paragraph)
+@app.route("/compare-phrases", methods=["POST"])
+def comparePhrases():
+    data = request.get_json()
+    orig_phrase = data["original_phrases"]
+    user_phrase = data["user_phrases"]
+    score = wordsGame.comparePhrases(orig_phrase, user_phrase)
+
+    return {"score": score / (max(len(orig_phrase), len(user_phrase)))}
