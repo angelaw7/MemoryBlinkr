@@ -101,7 +101,6 @@
     }
 
     function blink() {
-      console.log("blink");
       grid_container.innerHTML = "";
       length = expected_grid.length;
       let blank_grid = [];
@@ -114,16 +113,13 @@
       }
       new_grid = generateGrid(blank_grid);
       grid_container.appendChild(new_grid);
-      console.log("post blink");
       const grid_el = document.getElementById("grid");
       grid_el.addEventListener("click", (event) => {
         target = event.target;
         target_id = target.id;
         let [i, j] = target_id.split("-");
         (i = parseInt(i)), (j = parseInt(j));
-        console.log(i);
-        console.log(j);
-        console.log(blank_grid);
+
         blank_grid[i][j] == 1 ? (blank_grid[i][j] = 0) : (blank_grid[i][j] = 1);
         target.style.backgroundColor = colors[blank_grid[i][j]];
       });
@@ -134,7 +130,7 @@
       submitButton.addEventListener("click", () => {
         user_grid = blank_grid;
         compareGrids().then((res) => {
-          console.log(res);
+          console.log(res * 100); // score
         });
       });
 

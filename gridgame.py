@@ -30,11 +30,13 @@ def compareGrid(orig_arr, new_arr):
     Compares grids and returns the amount of different squares
     i.e.
     """
+    height = len(orig_arr)
+    width = len(orig_arr[0])
+    score = height * width
 
-    wrong_count = 0
-    n = len(orig_arr[0])
-    for i in range(n):
-        for j in range(n):
-            if new_arr[i][j] != orig_arr[i][j]:
-                wrong_count += 1
-    return wrong_count
+    for row in range(height):
+        for col in range(width):
+            if new_arr[row][col] != orig_arr[row][col]:
+                score -= 1
+
+    return score / (height * width)
