@@ -2,16 +2,33 @@
 
 <body>
     <div class="body-container">
-        <div id="title" class="typewriter">MemoryBlinkr</div>
+        <div id="title" class="fade-in-slow">MemoryBlinkr</div>
         <div class="start-container">
-            <button id="start_btn"> Grid Game</button>
-            <button id="start_btn"> Image Game </button>
-            <button id="start_btn"> Word Game </button>
+            <button id="grid_btn"> Grid Game</button>
+            <button id="image_btn"> Image Game </button>
+            <button id="word_btn"> Word Game </button>
             </div>
         </div>
     </div>
 
 </body>
+
+
+<script>
+
+    document.getElementById("grid_btn").onclick = function () {
+        location.href = "grid-game";
+    };
+
+    document.getElementById("image_btn").onclick = function () {
+        location.href = "image-game";
+    };
+
+    document.getElementById("word_btn").onclick = function () {
+        location.href = "word-game";
+    };
+
+</script>
 
 
 <style>
@@ -30,17 +47,12 @@
     .start-container{
         display: flex;
         justify-content: center;
+
+
     }
 
-    #title{
-        margin-top: 3in;
-        margin-bottom: .25in;
-        font-size: 96px;
-        animation: flicker-fade;
-    }
-
-    #start_btn{
-        background-color: #009305; /* Green */
+    button{
+        background-color: #008080; /* Teal */
         color: white;
         padding: 15px 32px;
         text-align: center;
@@ -48,8 +60,45 @@
         display: inline-block;
         font-size: 16px;
         font-weight: 200;
-        margin: 6px
+        margin: 6px;
     }
+
+    #title{
+        margin-top: 3in;
+        margin-bottom: .25in;
+        font-size: 96px;
+        animation-name: fadeIn;
+        animation-duration: 2s;
+    }
+
+    #grid_btn{
+        animation-name: fadeIn-alt;
+        animation-duration: 3s;
+
+    }
+    #image_btn{
+        animation-name: fadeIn-alt;
+        animation-duration: 3.25s;
+
+    }
+    #word_btn{
+        animation-name: fadeIn-alt;
+        animation-duration: 3.5s;
+
+    }
+
+    @keyframes fadeIn {
+        0%   {opacity: 0;}
+        100% {opacity: 1;}
+    }
+
+    @keyframes fadeIn-alt {
+        0%   {opacity: 0;}
+        30%  {opacity: 0;}
+        100% {opacity: 1;}
+    }
+    
+
 
 </style>
 
