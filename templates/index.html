@@ -81,8 +81,7 @@
       original_grid = expected_grid;
       grid_container.appendChild(g);
 
-      //awaitBlink();
-      blink();
+      awaitBlink();
 
       async function awaitBlink() {
         await fetch("/await-blink", {
