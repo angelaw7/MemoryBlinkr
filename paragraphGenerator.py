@@ -6,7 +6,7 @@ def generateParagraph(length):
     API_KEY = api_file.readline().strip()
 
     co = cohere.Client(API_KEY)
-x
+
     prediction = co.generate(
                 prompt='Give me a random paragraph that ends within the token limit',
                 max_tokens=length)
