@@ -8,6 +8,8 @@ import numpy as np
 detector = f_detector.eye_blink_detector()
 COUNTER = 0
 TOTAL = 0
+CURR_TIME = 0
+
 
 vs = VideoStream(src=0).start()
 while True:
@@ -29,17 +31,23 @@ while True:
         )
     else:
         img_post = im
+
     end_time = time.time() - star_time
+
+    CURR_TIME += end_time
+
     FPS = 1 / end_time
     cv2.putText(
         img_post,
-        f"FPS: {round(FPS,3)}",
+        f"FPS: {round(FPS,3)}, Time Elapsed: {round(CURR_TIME, 3)}",
         (10, 50),
         cv2.FONT_HERSHEY_COMPLEX,
         1,
         (0, 0, 255),
         2,
     )
+
+
     cv2.imshow("blink_detection", img_post)
     if cv2.waitKey(1) & 0xFF == ord("q"):
         break
