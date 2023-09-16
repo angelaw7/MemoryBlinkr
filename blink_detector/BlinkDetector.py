@@ -128,5 +128,3 @@ class BlinkDetector:
                     2,
                 )
         return img
-
-BlinkDetector.start()
