@@ -20,7 +20,7 @@ class BlinkDetector:
         TOTAL = 0
 
         vs = VideoStream(src=0).start()
-        self.start_time = time.time() + 2
+        self.start_time = time.time() + 1
 
         while True:
             im = vs.read()
