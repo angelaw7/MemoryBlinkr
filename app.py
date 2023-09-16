@@ -1,7 +1,6 @@
-from flask import Flask, jsonify, request, send_from_directory
+from flask import Flask, jsonify, request, send_from_directory, redirect
 import gridgame
-import paragraphGame
-
+# import paragraphGame
 from blink_detector.BlinkDetector import BlinkDetector
 
 global old_grid, old_paragraph
@@ -12,8 +11,15 @@ app = Flask(__name__)
 
 @app.route("/")
 def health_check():
+    return send_from_directory("templates/", "menu.html")
+
+@app.route("/grid-game")
+def loadGridPage():
     return send_from_directory("templates/", "index.html")
 
+@app.route("/image-game")
+def loadImagePage():
+    return send_from_directory("templates/", "canvas.html")
 
 @app.route("/get-grid", methods=["POST"])
 def getGrid():
@@ -54,3 +60,7 @@ def getParagraph():
 def compareParagraphs():
     new_paragraph = request.get_json()
     paragraphGame.compareParagraph(old_paragraph, new_paragraph)
+
+
+
+
