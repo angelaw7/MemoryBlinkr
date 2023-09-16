@@ -32,16 +32,26 @@
     const start_btn = document.getElementById("start_btn");
     const grid_width = 500;
 
+    // We start at level 1 and progressively move to higher levels
     let level = 1;
+
+    // We do stuff when the start button is clicked
     start_btn.addEventListener("click", (event) => {
+        // adding the class "hide" to any element removes it from the screen
         start_btn.classList.add("hide");
         newGame();
+        // removing the class "hide" displays hidden elements
         grid_container.classList.remove("hide");
     });
+
+    // Right now, the grid is just black and white. We can support multiple colors, if we want
     const colors = ["white", "black"];
+
+    // We keep track of the random grid and the user's answers
     let original_grid = null;
     let user_grid = null;
 
+    // This function generates a new random grid and starts the camera
     function newGame() {
         const grid_size = level + 2;
         async function getGrid(url = "", data = { grid_size: grid_size }) {
@@ -61,15 +71,20 @@
             return grid;
         }
 
+        // We call the Flask backend here. "data" holds the grid size we want
         getGrid("/get-grid").then((data) => {
             currentGame(data);
         });
     }
 
+    // We generate ids for the various cells so we can use them as indices in the future
     function genID(i, j) {
         return i.toString() + "-" + j.toString();
     }
 
+    // Reusable function that creates the actual grids we see on the screen
+    // "grid" is an array of 1s and 0s (in case of black and white grid) and
+    // converts these into colors for the html elements
     function generateGrid(grid) {
         const grid_el = document.createElement("div");
         grid_el.setAttribute("id", "grid");
@@ -79,7 +94,7 @@
             row.classList.add("row");
             for (let j = 0; j < length; j++) {
                 const cell = document.createElement("div");
-                value_id = grid[i][j];
+                let value_id = grid[i][j];
                 cell.style.backgroundColor = colors[value_id];
                 cell.classList.add("cell");
                 const cell_id = genID(i, j);
@@ -96,6 +111,8 @@
     let expected_grid = [];
     let blank_grid = [];
     const hasBlinked = false;
+
+    // Since we expect to have multiple levels, we can use this function to start a new level
     function currentGame(grid) {
         expected_grid = grid;
         const g = generateGrid(expected_grid);
@@ -121,12 +138,14 @@
         }
     }
 
+    // handling blinking
+    // We create a blank white grid that the player can fill in
     function blink() {
         grid_container.innerHTML = "";
         length = expected_grid.length;
         let blank_grid = [];
         for (let i = 0; i < length; i++) {
-            row = [];
+            let row = [];
             for (let j = 0; j < length; j++) {
                 row.push(0);
             }
@@ -135,6 +154,8 @@
         new_grid = generateGrid(blank_grid);
         grid_container.appendChild(new_grid);
         const grid_el = document.getElementById("grid");
+
+        // This event listener handles toggling of colors when clicking a cell
         grid_el.addEventListener("click", (event) => {
             target = event.target;
             target_id = target.id;
@@ -150,6 +171,8 @@
         submitButton.classList.add('btn')
         grid_container.appendChild(submitButton);
 
+        // Submitting the player's grid
+        // compareGrid checks if the players result matches our expectations
         submitButton.addEventListener("click", () => {
             user_grid = blank_grid
             let score = document.getElementById('score')
