@@ -8,6 +8,7 @@ global old_grid, old_paragraph
 blink_detector = BlinkDetector()
 
 app = Flask(__name__)
+blink_detector.activate_cam()
 
 
 @app.route("/")
