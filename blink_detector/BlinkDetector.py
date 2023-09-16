@@ -9,8 +9,6 @@ import dlib
 from scipy.spatial import distance as dist
 from imutils import face_utils
 
-import requests
-
 
 class BlinkDetector:
     def __init__(self):
@@ -22,8 +20,9 @@ class BlinkDetector:
         TOTAL = 0
 
         vs = VideoStream(src=0).start()
-        while True:
+        self.start_time = time.time() + 2
 
+        while True:
             im = vs.read()
             im = cv2.flip(im, 1)
             im = imutils.resize(im, width=720)
@@ -66,12 +65,16 @@ class BlinkDetector:
         ear = (leftEAR + rightEAR) / 2.0
 
         done = False
+        end_time = time.time()
+        time_diff = end_time - self.start_time
+
         if ear < cfg.EYE_AR_THRESH:
             COUNTER += 1
 
         else:
-            if COUNTER >= cfg.EYE_AR_CONSEC_FRAMES:
+            if COUNTER >= cfg.EYE_AR_CONSEC_FRAMES and time_diff > 2:
                 TOTAL += 1
+                self.start_time = time.time()
                 done = True
 
             COUNTER = 0
