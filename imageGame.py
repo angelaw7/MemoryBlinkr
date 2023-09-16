@@ -3,7 +3,6 @@ import numpy as np
 
 
 def getErrorScore(img1, img2):
-
     img1 = cv2.imread(img1)
     img2 = cv2.imread(img2)
     h, w = img1.shape
