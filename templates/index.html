@@ -12,19 +12,42 @@
 <script>
     let grid_container = document.getElementById('grid_container')
     const start_btn = document.getElementById('start_btn')
+    const grid_width = 500;
+
+    let level = 1
     start_btn.addEventListener("click", (event) => {
         start_btn.classList.add("hide")
+        newGame()
         grid_container.classList.remove("hide")
     })
-
-    // temp constants
-    const expected_grid = [[0, 1, 0, 1], [1, 0, 0, 0], [0, 0, 1, 1], [1, 1, 1, 0]]
-    const blank_grid = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
-
-
     const colors = ['white', 'black']
-    const length = expected_grid.length
-    const grid_width = 500;
+
+    function newGame() {
+        const grid_size = level + 2
+        async function getGrid(url = '', data = {'grid_size': grid_size}) {
+            const response = await fetch(url, {
+                method: 'POST',
+                mode: 'cors',
+                cache: 'no-cache', 
+                credentials: 'same-origin', 
+                headers: {
+                'Content-Type': 'application/json'
+                },
+                redirect: 'follow',
+                referrerPolicy: 'no-referrer', 
+                body: JSON.stringify(data)
+            });
+            let grid = response.json()
+            return grid
+        }
+
+        getGrid('/get-grid').then(
+            data => {
+                currentGame(data)
+            }
+        )
+    }
+
 
     function genID(i, j) {
         return (i.toString()) + '-' + (j.toString())
@@ -37,7 +60,6 @@
         for (let i = 0; i < length; i++) {
             const row = document.createElement('div')
             row.classList.add('row')
-            const max_width = 20;
             for (let j = 0; j < length; j++) {
                 const cell = document.createElement('div')
                 value_id = grid[i][j]
@@ -53,34 +75,46 @@
         }
         return grid_el
     }
-    const g = generateGrid(expected_grid)
-    grid_container.appendChild(g)
 
-    let new_grid = []
-    for (let i = 0; i < length; i++) {
-        row = []
-        for (let j = 0; j < length; j++) {
-            row.push(0)
+
+    let expected_grid = []
+    let blank_grid = []
+    const hasBlinked = false
+    function currentGame(grid) {
+        expected_grid = grid
+        const g = generateGrid(expected_grid)
+        grid_container.appendChild(g)
+
+        if (hasBlinked) {
+            const grid_el = document.getElementById('grid')
+            grid_el.addEventListener("click", (event) => {
+                target = event.target
+                target_id = target.id
+                let [i, j] = target_id.split('-')
+                i = parseInt(i), j = parseInt(j)
+                blank_grid[i][j] == 1 ? blank_grid[i][j] = 0 : blank_grid[i][j] = 1
+                target.style.backgroundColor = colors[blank_grid[i][j]]
+            })
         }
-        new_grid.push(row)
     }
 
     function blink() {
         grid_container.innerHTML = ''
-        const blank_grid = generateGrid(blank_grid)
+        length = expected_grid.length
+        let blank_grid = []
+        for (let i = 0; i < length; i++) {
+            row = []
+            for (let j = 0; j < length; j++) {
+                row.push(0)
+            }
+            new_grid.push(row)
+        }
+        blank_grid = generateGrid(blank_grid)
         grid_container.appendChild(blank_grid)
     }
 
-    const grid_el = document.getElementById('grid')
-    grid_el.addEventListener("click", (event) => {
-        target = event.target
-        target_id = target.id
-        let [i, j] = target_id.split('-')
-        i = parseInt(i), j = parseInt(j)
-        blank_grid[i][j] == 1 ? blank_grid[i][j] = 0 : blank_grid[i][j] = 1
-        target.style.backgroundColor = colors[blank_grid[i][j]]
+    setTimeout(blink, 500)
 
-    })
 
 </script>
 

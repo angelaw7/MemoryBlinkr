@@ -1,7 +1,5 @@
-from flask import Flask
-from flask import jsonify
+from flask import Flask, jsonify, request, send_from_directory
 import gridgame
-import json
 
 app = Flask(__name__)
 
@@ -9,16 +7,18 @@ global old_grid
 
 @app.route("/")
 def hello_world():
-    return "<p>Hello, World!</p>"
+    return send_from_directory("templates/", 'index.html')  
 
-@app.route('/start-gridgame', methods=['POST'])
+@app.route('/get-grid', methods=['POST'])
 def sendGridGame():
     global old_grid
-    old_grid = gridgame.generateGrid(5, 5)
+    grid_size = request.json['grid_size']
+    old_grid = gridgame.generateGrid(grid_size, grid_size)
     return jsonify(old_grid)
 
 @app.route('/receive-player-grid', methods=['POST'])
 def receiveGridGame():
-    new_grid = request.get_json()
+    new_grid = request.json
     return jsonify(gridgame.compareGrid(old_grid, new_grid))
 
+app.run()

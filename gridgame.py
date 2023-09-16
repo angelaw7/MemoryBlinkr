@@ -17,12 +17,15 @@ def generateGrid(len: int, n: int):
     while(current_count_colour < n):
         x = random.randint(0,n-1)
         y = random.randint(0,n-1)
-        if((x,y) in set):
+        if (x,y) in h_set:
+            h_set.add((x, y))
             continue
         arr[x][y] = 1
         current_count_colour+=1
-
     return arr
+
+# print(generateGrid(5, 5))
+# print(generateGrid(4, 4))
 
 def compareGrid(orig_arr, new_arr):
 
