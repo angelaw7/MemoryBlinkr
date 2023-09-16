@@ -18,6 +18,8 @@
       grid_container.classList.remove("hide");
     });
     const colors = ["white", "black"];
+    let original_grid = null;
+    let user_grid = null;
 
     function newGame() {
       const grid_size = level + 2;
@@ -76,12 +78,12 @@
     function currentGame(grid) {
       expected_grid = grid;
       const g = generateGrid(expected_grid);
+      original_grid = expected_grid;
       grid_container.appendChild(g);
 
       awaitBlink();
 
       async function awaitBlink() {
-        console.log("hellooo");
         await fetch("/await-blink", {
           method: "GET",
           mode: "cors",
@@ -125,6 +127,33 @@
         blank_grid[i][j] == 1 ? (blank_grid[i][j] = 0) : (blank_grid[i][j] = 1);
         target.style.backgroundColor = colors[blank_grid[i][j]];
       });
+      const submitButton = document.createElement("button");
+      submitButton.textContent = "Check";
+      document.body.appendChild(submitButton);
+
+      submitButton.addEventListener("click", () => {
+        user_grid = blank_grid;
+        compareGrids().then((res) => {
+          console.log(res);
+        });
+      });
+
+      async function compareGrids() {
+        const data = { oldGrid: original_grid, newGrid: user_grid };
+        const res = await fetch("/compare-grids", {
+          method: "POST",
+          mode: "cors",
+          cache: "no-cache",
+          credentials: "same-origin",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          redirect: "follow",
+          referrerPolicy: "no-referrer",
+          body: JSON.stringify(data),
+        });
+        return res.json();
+      }
     }
   </script>
 
