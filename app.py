@@ -50,14 +50,14 @@ def compareGrids():
     return jsonify(gridgame.compareGrid(data["oldGrid"], data["newGrid"]))
 
 
-# @app.route("/get-paragraph", methods=["POST"])
-# def getParagraph():
-#     global old_paragraph
-#     old_paragraph = paragraphGame.generateParagraph(50)
-#     return jsonify(old_paragraph)
+@app.route("/get-paragraph", methods=["POST"])
+def getParagraph():
+    global old_paragraph
+    old_paragraph = paragraphGame.generateParagraph(50)
+    return jsonify(old_paragraph)
 
 
-# @app.route("/compare-paragraphs", methods=["POST"])
-# def compareParagraphs():
-#     new_paragraph = request.get_json()
-#     paragraphGame.compareParagraph(old_paragraph, new_paragraph)
+@app.route("/compare-paragraphs", methods=["POST"])
+def compareParagraphs():
+    new_paragraph = request.get_json()
+    paragraphGame.compareParagraph(old_paragraph, new_paragraph)
