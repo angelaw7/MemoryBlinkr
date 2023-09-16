@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request, render_template
 from flask import jsonify
 import gridgame
 import json
@@ -8,8 +8,8 @@ app = Flask(__name__)
 global old_grid
 
 @app.route("/")
-def hello_world():
-    return "<p>Hello, World!</p>"
+def home():
+    return render_template('index.html')
 
 @app.route('/start-gridgame', methods=['POST'])
 def sendGridGame():
