@@ -1,4 +1,5 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
+from flask import jsonify
 import gridgame
 
 from blink_detector.BlinkDetector import BlinkDetector
@@ -10,17 +11,14 @@ app = Flask(__name__)
 
 
 @app.route("/")
-def health_check():
-    return "<p>healthy!</p>"
+def hello_world():
+    return send_from_directory("templates/", 'index.html')  
 
-
-@app.route("/get-grid", methods=["GET"])
-def getGrid():
-    """
-    Get a randomly generated grid
-    """
+@app.route('/get-grid', methods=['POST'])
+def sendGridGame():
     global old_grid
-    old_grid = gridgame.generateGrid(5, 5)
+    grid_size = request.json['grid_size']
+    old_grid = gridgame.generateGrid(grid_size, grid_size)
     return jsonify(old_grid)
 
 
