@@ -12,10 +12,10 @@ app = Flask(__name__)
 
 @app.route("/")
 def health_check():
-    return "<p>healthy!</p>"
+    return send_from_directory("templates/", "index.html")
 
 
-@app.route("/get-grid", methods=["GET"])
+@app.route("/get-grid", methods=["POST"])
 def getGrid():
     """
     Get a randomly generated grid
