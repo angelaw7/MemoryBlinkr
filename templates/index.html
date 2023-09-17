@@ -55,6 +55,8 @@
 
     // This function generates a new random grid and starts the camera
     function newGame() {
+        const grid_container_el = document.getElementById('grid_container')
+        grid_container_el.innerHTML = ""
         const grid_size = level + 2;
         async function getGrid(url = "", data = { grid_size: grid_size }) {
             const response = await fetch(url, {
@@ -114,7 +116,7 @@
     let blank_grid = [];
     const hasBlinked = false;
 
-    // Since we expect to have multiple levels, we can use this function to start a new level
+    // Since we expect to have multiple levels, we keep track of currentLevel
     function currentGame(grid) {
         expected_grid = grid;
         const g = generateGrid(expected_grid);
@@ -144,27 +146,38 @@
         console.log(grid)
         len = grid.length
         let count_wrong = 0
-        for (let i=0; i < len; i++) {
-            for (let j =0; j < len; j++) {
-                    const element_id = genID(i, j)
-                    element = document.getElementById(element_id)
-                    element.style.backgroundColor = colors[grid[i][j]]
-                    if (grid[i][j] == 3) {
-                        count_wrong += 1
-                    }
+        for (let i = 0; i < len; i++) {
+            for (let j = 0; j < len; j++) {
+                const element_id = genID(i, j)
+                element = document.getElementById(element_id)
+                element.style.backgroundColor = colors[grid[i][j]]
+                if (grid[i][j] == 3) {
+                    count_wrong += 1
+                }
             }
         }
         const grid_el = document.getElementById('grid')
-        console.log(grid_el)
         if (count_wrong) {
             grid_el.classList.add('correct')
             grid_el.classList.remove('wrong')
+            setTimeout(newGame, 500)
         }
         else {
             grid_el.classList.add('wrong')
-            grid_el.classList.remove('correct')  
+            grid_el.classList.remove('correct')
+            setTimeout(nextLevel, 500)
         }
 
+    }
+
+    function nextLevel() {
+        const grid_container_el = document.getElementById('grid_container')
+        grid_container_el.innerHTML = ""
+        newGame()
+        const lv = document.getElementById('level');
+        level += 1
+        console.log(lv.innerHTML)
+        lv.innerHTML = (level).toString()
     }
 
     // handling blinking
@@ -227,10 +240,7 @@
             }
             compareGridsAsync().then((data) => {
                 console.log(data)
-                const lv = document.getElementById('level');
-                level += 1
-                console.log(lv.innerHTML)
-                lv.innerHTML = (level).toString()
+
                 showFeedback(data)
             });
         }
@@ -356,19 +366,18 @@
 
     .correct {
         border: 1px solid green;
-        box-shadow:   inset 0 -3em 3em rgba(255, 0, 0, 0.1),
-    0 0 0 2px rgb(255, 255, 255),
-    0.3em 0.3em 1em rgba(255, 0, 0, 0.3);
+        box-shadow: inset 0 -3em 3em rgba(255, 0, 0, 0.1),
+            0 0 0 8px rgb(255, 255, 255),
+            0.5em 0.5em 1em rgba(255, 0, 0, 0.3);
     }
 
     .wrong {
         border: 1px solid red;
-        box-shadow:     inset 0 -3em 3em rgba(0, 255, 0, 0.1),
-    0 0 0 2px rgb(255, 255, 255),
-    0.3em 0.3em 1em rgba(0, 255, 0, 0.3);
+        box-shadow: inset 0 -3em 3em rgba(0, 255, 0, 0.1),
+            0 0 0 8px rgb(255, 255, 255),
+            0.5em 0.5em 1em rgba(0, 255, 0, 0.3);
 
     }
-
 </style>
 
 </html>
