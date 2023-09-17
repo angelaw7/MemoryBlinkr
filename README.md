@@ -1,8 +1,7 @@
 # MemoryBlinkr
 Ever wanted to challenge your memory? Or maybe improve it because your memory fades in the blink of an eye? MemoryBlinkr is here to help – a game where you only have until your next blink to remember an image or text and replicate it as accurately as possible.
 
-![menu](https://github.com/angelaw7/htn-2023/assets/74735037/2b626879-4d44-40f3-ba82-55c7377b1b22)
-
+![menu](https://github.com/angelaw7/MemoryBlinkr/assets/74735037/575a8374-b024-4223-babe-c5ba716dfa65)
 
 ## Inspiration
 We wanted a chance to work with computer vision and game development, and since the final product is essentially a collection of minigames with a common theme, it was perfect for learning a variety of new systems.
