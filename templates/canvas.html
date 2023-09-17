@@ -1,6 +1,12 @@
 <html>
 
 <body>
+
+    <div id="image_div" style="overflow-x: auto;">
+        <img src="" width="500" height="500"></img>
+    </div>
+
+
     <div id="canvas_div" style="overflow-x: auto;">
         <canvas id="canvas" width="500" height="500"></canvas>
         <div class="controls">
@@ -25,13 +31,22 @@
 
 <style>
     #canvas_div {
+        pointer-events:none;
+        visibility: hidden;
         text-align: center;
         display: block;
         margin-left: auto;
         margin-right: auto;
     }
 
-    canvas {
+    #image_div {
+        text-align: center;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    canvas, img {
         border: 2px solid black;
     }
 
@@ -42,19 +57,50 @@
 </style>
 
 <script>
+    
+    const image = document.querySelector('img');
+    const image_div = document.getElementById("image_div")
+    const canvas_div = document.getElementById("canvas_div")
+
+
+    newGame()
+
     const canvas = document.getElementById('canvas');
     const context = canvas.getContext('2d');
     let dummy_link = document.createElement('a')
 
     function dlCanvas() {
-        console.log('test')
+
         var dataURL = canvas.toDataURL("image/png");
         var a = document.createElement('a');
         a.href = dataURL
-        // a.download = 'canvas-download.jpeg';
-        //a.click();
-        console.log(a.href)
-    };
+        a.click();
+
+        async function compareImage(url = "", data = {}) {
+            const response = await fetch(url, {
+            method: "POST",
+            mode: "cors",
+            cache: "no-cache",
+            credentials: "same-origin",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            redirect: "follow",
+            referrerPolicy: "no-referrer",
+            body: JSON.stringify(data),
+            });
+       
+        };
+        
+        compareImage("compare-image", {dataURL}).then((result) => {
+            console.log(result)
+        });
+
+
+
+    }
+
+
     document.getElementById("sb").addEventListener('click', dlCanvas);
 
 
@@ -63,6 +109,7 @@
     let y = 0;
     var offsetX;
     var offsetY;
+
 
     function startup() {
         canvas.addEventListener('touchstart', handleStart);
@@ -179,6 +226,64 @@
         context.setTransform(1, 0, 0, 1, 0, 0);
         context.clearRect(0, 0, context.canvas.width, context.canvas.height);
     }
+
+    function currentGame(data) {
+      
+      image.src = data
+      
+      awaitBlink();
+
+      function blink() {
+        console.log("yuhhh")
+        image.remove()
+        canvas_div.style.visibility = "visible"
+        canvas_div.style.pointerEvents = "auto"
+
+      }
+
+      async function awaitBlink() {
+        await fetch("/await-blink", {
+          method: "GET",
+          mode: "cors",
+          cache: "no-cache",
+          credentials: "same-origin",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          redirect: "follow",
+          referrerPolicy: "no-referrer",
+        }).then(() => {
+          blink();
+        });
+      }
+    }
+    
+    function newGame() {
+      async function getImage(url = "", data = {}) {
+        const response = await fetch(url, {
+          method: "POST",
+          mode: "cors",
+          cache: "no-cache",
+          credentials: "same-origin",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          redirect: "follow",
+          referrerPolicy: "no-referrer",
+          body: JSON.stringify(data),
+        });
+        let grid = response.json();
+        return grid;
+      }
+
+      getImage("/get-image").then((data) => {
+        currentGame(data);
+      });
+
+
+
+    }
+
 </script>
 
 </html>

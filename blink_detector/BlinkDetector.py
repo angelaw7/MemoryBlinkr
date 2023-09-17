@@ -47,6 +47,7 @@ class BlinkDetector:
 
             cv2.imshow("blink_detection", img_post)
             if cv2.waitKey(1) & 0xFF == ord("q"):
+                vs.stop()
                 break
         vs.stop()
 
