@@ -6,6 +6,8 @@
         <img src="" width="500" height="500"></img>
     </div>
 
+    <div id="text_div"></div>
+
 
     <div id="canvas_div" style="overflow-x: auto;">
         <canvas id="canvas" width="500" height="500"></canvas>
@@ -30,6 +32,13 @@
 </body>
 
 <style>
+
+    #text_div {
+        font-family: 'Courier New', Courier, monospace;
+        font-size: xx-large;
+        text-align: center;
+    }
+
     #canvas_div {
         pointer-events:none;
         visibility: hidden;
@@ -50,10 +59,11 @@
         border: 2px solid black;
     }
 
-
     .controls {
         margin: 20px;
     }
+
+
 </style>
 
 <script>
@@ -67,6 +77,7 @@
 
     const canvas = document.getElementById('canvas');
     const context = canvas.getContext('2d');
+    const text = document.getElementById('text_div')
     let dummy_link = document.createElement('a')
 
     function dlCanvas() {
@@ -88,7 +99,10 @@
         };
         
         compareImage("compare-image", {dataURL}).then(score => {
-            console.log(100-100*score)
+            
+            text.textContent = "Your score is: ".concat(Math.round(10*(100-100*score))/10)
+            canvas_div.style.visibility="hidden"
+            canvas_div.style.pointerEvents="none"
         }); 
 
     }
