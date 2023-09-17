@@ -76,18 +76,24 @@
       document.getElementById("words_div").appendChild(phraseInputBox);
 
       const phraseSubmitButton = document.createElement("input");
-      phraseSubmitButton.innerText = "Enter";
+      phraseSubmitButton.value = "Enter";
+      phraseSubmitButton.id = "submit-button";
       phraseSubmitButton.type = "button";
       document.getElementById("words_div").appendChild(phraseSubmitButton);
 
       phraseSubmitButton.onclick = () => {
         comparePhrases(phraseInputBox.value).then((res) => {
           showScore(Object.values(res));
+          phraseSubmitButton.value = "Enter";
+          phraseSubmitButton.disabled = false;
         });
       };
     }
 
     async function comparePhrases(user_input) {
+      const phraseSubmitButton = document.getElementById("submit-button");
+      phraseSubmitButton.value = "Loading...";
+      phraseSubmitButton.disabled = true;
       user_phrase = user_input;
       const res = await fetch("/compare-phrases", {
         method: "POST",
@@ -112,6 +118,12 @@
       scoreText.innerHTML =
         Math.round(value * 100 * 100) / 100 + "% similarity!";
       document.getElementById("words_div").appendChild(scoreText);
+      const scoreDetails1 = document.createElement("p");
+      scoreDetails1.innerHTML = "Original phrase: " + phrase;
+      const scoreDetails2 = document.createElement("p");
+      scoreDetails2.innerHTML = "Your phrase: " + user_phrase;
+      document.getElementById("words_div").appendChild(scoreDetails1);
+      document.getElementById("words_div").appendChild(scoreDetails2);
     }
   </script>
   <style>
