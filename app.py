@@ -54,7 +54,7 @@ def getImage():
     Get a randomly selected image
     """
     global image
-    i = random.randint(0, 3)
+    i = random.randint(2, 3)
     with open(f"resources/sketch_{i}.png", "rb") as image_file:
         image = "data:image/png;base64,"
         image += str(base64.b64encode(image_file.read()).decode("utf-8"))
