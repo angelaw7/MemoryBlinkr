@@ -74,29 +74,22 @@
         var dataURL = canvas.toDataURL("image/png");
         var a = document.createElement('a');
         a.href = dataURL
-        a.click();
 
         async function compareImage(url = "", data = {}) {
             const response = await fetch(url, {
             method: "POST",
-            mode: "cors",
-            cache: "no-cache",
-            credentials: "same-origin",
             headers: {
                 "Content-Type": "application/json",
             },
-            redirect: "follow",
-            referrerPolicy: "no-referrer",
             body: JSON.stringify(data),
             });
-       
+            let score = response.json()
+            return score
         };
         
-        compareImage("compare-image", {dataURL}).then((result) => {
-            console.log(result)
-        });
-
-
+        compareImage("compare-image", {dataURL}).then(score => {
+            console.log(100-100*score)
+        }); 
 
     }
 
@@ -234,7 +227,6 @@
       awaitBlink();
 
       function blink() {
-        console.log("yuhhh")
         image.remove()
         canvas_div.style.visibility = "visible"
         canvas_div.style.pointerEvents = "auto"
