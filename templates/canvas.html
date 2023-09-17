@@ -2,25 +2,32 @@
 
 <body>
 
-    <div id="image_div" style="overflow-x: auto;">
-        <img src="" width="500" height="500"></img>
-    </div>
+    <div class="body-container">
+        <h1> Image Game</h1>
+        <div id="start_box" class="start_box">
+            <p> How well can you draw? </p>
+        </div>
+        <div id="image_div" style="overflow-x: auto;">
+            <img src="" width="500" height="500"></img>
+        </div>
 
-    <div id="text_div"></div>
+        <div id="text_div">
 
-    <button id="redo-btn">try again</button>
+        </div>
+
+        <button id="redo-btn">Try Again</button>
 
 
-    <div id="canvas_div" style="overflow-x: auto;">
-        <canvas id="canvas" width="500" height="500"></canvas>
-        <div class="controls">
-            <button onclick="javascript:clearArea();return false;">Clear Area</button>
-            Line width : <select id="selWidth">
-                <option value="11">11</option>
-                <option value="13" selected="selected">13</option>
-                <option value="15">15</option>
-            </select>
-            Color : <select id="selColor">
+        <div id="canvas_div" style="overflow-x: auto;">
+            <canvas id="canvas" width="500" height="500"></canvas>
+            <div class="controls">
+                <button onclick="javascript:clearArea();return false;">Clear Area</button>
+                Line width : <select id="selWidth">
+                    <option value="11">11</option>
+                    <option value="13" selected="selected">13</option>
+                    <option value="15">15</option>
+                </select>
+                Color : <select id="selColor">
                 <option value="black" selected="selected">black</option>
                 <option value="blue">blue</option>
                 <option value="red">red</option>
@@ -28,62 +35,14 @@
                 <option value="yellow">yellow</option>
                 <option value="gray">gray</option>
             </select>
-            <button id="sb">Submit</button>
+                <button id="sb">Submit</button>
+            </div>
         </div>
     </div>
 </body>
 
-<style>
-
-    #text_div {
-        font-family: 'Courier New', Courier, monospace;
-        font-size: xx-large;
-        text-align: center;
-    }
-
-    #canvas_div {
-        visibility: hidden;
-        text-align: center;
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    #image_div {
-        text-align: center;
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    #redo-btn{
-        background-color: #008080;
-        color: white;
-        padding: 15px 32px;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 16px;
-        font-weight: 200;
-        margin: 6px;
-
-        visibility: hidden;
-        pointer-events: none;
-    }
-
-    canvas, img {
-        border: 2px solid black;
-    }
-
-    .controls {
-        margin: 20px;
-    }
-
-
-</style>
-
 <script>
-    
+
 
 
     const image = document.querySelector('img');
@@ -110,24 +69,24 @@
 
         async function compareImage(url = "", data = {}) {
             const response = await fetch(url, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
             });
             let score = response.json()
             return score
         };
-        
-        compareImage("compare-image", {dataURL}).then(score => {
-            
-            text.textContent = "Your score is: ".concat(Math.round(10*(100-100*score))/10)
-            canvas_div.style.visibility="hidden"
-            canvas_div.style.pointerEvents="none"
-            redo_btn.style.visibility="visible"
-            redo_btn.style.pointerEvents="auto"
-        }); 
+
+        compareImage("compare-image", { dataURL }).then(score => {
+
+            text.textContent = "Your score is: ".concat(Math.round(10 * (100 - 100 * score)) / 10)
+            canvas_div.style.visibility = "hidden"
+            canvas_div.style.pointerEvents = "none"
+            redo_btn.style.visibility = "visible"
+            redo_btn.style.pointerEvents = "auto"
+        });
 
     }
 
@@ -259,61 +218,149 @@
     }
 
     function currentGame(data) {
-      
-      image.src = data
-      
-      awaitBlink();
 
-      function blink() {
-        image.remove()
-        canvas_div.style.visibility = "visible"
-        canvas_div.style.pointerEvents = "auto"
+        image.src = data
 
-      }
+        awaitBlink();
 
-      async function awaitBlink() {
-        await fetch("/await-blink", {
-          method: "GET",
-          mode: "cors",
-          cache: "no-cache",
-          credentials: "same-origin",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          redirect: "follow",
-          referrerPolicy: "no-referrer",
-        }).then(() => {
-          blink();
-        });
-      }
+        function blink() {
+            image.remove()
+            canvas_div.style.visibility = "visible"
+            canvas_div.style.pointerEvents = "auto"
+
+        }
+
+        async function awaitBlink() {
+            await fetch("/await-blink", {
+                method: "GET",
+                mode: "cors",
+                cache: "no-cache",
+                credentials: "same-origin",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                redirect: "follow",
+                referrerPolicy: "no-referrer",
+            }).then(() => {
+                blink();
+            });
+        }
     }
-    
-    function newGame() {
-      async function getImage(url = "", data = {}) {
-        const response = await fetch(url, {
-          method: "POST",
-          mode: "cors",
-          cache: "no-cache",
-          credentials: "same-origin",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          redirect: "follow",
-          referrerPolicy: "no-referrer",
-          body: JSON.stringify(data),
-        });
-        let canvas = response.json();
-        return canvas;
-      }
 
-      getImage("/get-image").then((data) => {
-        currentGame(data);
-      });
+    function newGame() {
+        async function getImage(url = "", data = {}) {
+            const response = await fetch(url, {
+                method: "POST",
+                mode: "cors",
+                cache: "no-cache",
+                credentials: "same-origin",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                redirect: "follow",
+                referrerPolicy: "no-referrer",
+                body: JSON.stringify(data),
+            });
+            let canvas = response.json();
+            return canvas;
+        }
+
+        getImage("/get-image").then((data) => {
+            currentGame(data);
+        });
 
 
 
     }
 
 </script>
+
+<style>
+    body {
+        font-family: 'Courier New', Courier, monospace;
+        background-color: #eee;
+    }
+
+    .body-container {
+        display: flex;
+        flex-direction: column;
+        justify-items: center;
+        align-items: center;
+        margin-top: 100px;
+    }
+
+    .start-container {
+        display: flex;
+        justify-content: center;
+    }
+
+    button {
+        background-color: #008080;
+        /* Teal */
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        font-weight: 200;
+        margin: 6px;
+        cursor: pointer;
+    }
+
+    .btn:hover {
+        background-color: #333;
+        transition: 0.3s;
+        cursor: pointer;
+    }
+
+    #text_div {
+        font-family: 'Courier New', Courier, monospace;
+        font-size: xx-large;
+        text-align: center;
+    }
+
+    #canvas_div {
+        visibility: hidden;
+        text-align: center;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    #image_div {
+        text-align: center;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    #redo-btn {
+        background-color: #008080;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        font-weight: 200;
+        margin: 6px;
+
+        visibility: hidden;
+        pointer-events: none;
+    }
+
+    canvas,
+    img {
+        border: 2px solid #333;
+        background-color: white;
+    }
+
+    .controls {
+        margin: 20px;
+    }
+
+
+</style>
 
 </html>
