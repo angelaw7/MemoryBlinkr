@@ -1,29 +1,133 @@
 <html>
-
-<body>
-    <div id="words_div" style="overflow-x: auto;">
-        <input>
-            Phrase to study
-        </input>
+  <body>
+    <div id="words_div" style="overflow-x: auto">
+      <label id="input-label">Topic to study</label>
+      <input type="text" name="input" id="input" />
+      <input type="button" id="submit" value="Go!" />
     </div>
-</body>
+  </body>
 
-<style>
+  <script>
+    const inputBox = document.getElementById("input");
+    const inputLabel = document.getElementById("input-label");
+    const submitButton = document.getElementById("submit");
+
+    let phrase = null;
+
+    inputBox.onclick = () => {
+      getPhrase(inputBox.value);
+    };
+
+    submitButton.onclick = () => {
+      getPhrase(inputBox.value).then((res) => {
+        phrase = res;
+        showPhrase();
+      });
+    };
+
+    async function getPhrase(topic) {
+      const res = await fetch("/get-phrase", {
+        method: "POST",
+        mode: "cors",
+        cache: "no-cache",
+        credentials: "same-origin",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        redirect: "follow",
+        referrerPolicy: "no-referrer",
+        body: JSON.stringify({ topic: topic }),
+      });
+      return res.json();
+    }
+
+    function showPhrase() {
+      const phraseText = document.createElement("h2");
+      phraseText.id = "generated-phrase";
+      phraseText.innerHTML = phrase;
+      document.getElementById("words_div").appendChild(phraseText);
+
+      async function awaitBlink() {
+        await fetch("/await-blink", {
+          method: "GET",
+          mode: "cors",
+          cache: "no-cache",
+          credentials: "same-origin",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          redirect: "follow",
+          referrerPolicy: "no-referrer",
+        });
+      }
+
+      awaitBlink().then(() => blink());
+    }
+
+    function blink() {
+      inputBox.style.display = "none";
+      inputLabel.style.display = "none";
+      submitButton.style.display = "none";
+
+      const phraseText = document.getElementById("generated-phrase");
+      phraseText.style.display = "none";
+
+      const phraseInputBox = document.createElement("input");
+      document.getElementById("words_div").appendChild(phraseInputBox);
+
+      const phraseSubmitButton = document.createElement("input");
+      phraseSubmitButton.innerText = "Enter";
+      phraseSubmitButton.type = "button";
+      document.getElementById("words_div").appendChild(phraseSubmitButton);
+
+      phraseSubmitButton.onclick = () => {
+        comparePhrases(phraseInputBox.value).then((res) => {
+          showScore(Object.values(res));
+        });
+      };
+    }
+
+    async function comparePhrases(user_input) {
+      user_phrase = user_input;
+      const res = await fetch("/compare-phrases", {
+        method: "POST",
+        mode: "cors",
+        cache: "no-cache",
+        credentials: "same-origin",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        redirect: "follow",
+        referrerPolicy: "no-referrer",
+        body: JSON.stringify({
+          original_phrase: phrase,
+          user_phrase: user_phrase,
+        }),
+      });
+      return res.json();
+    }
+
+    function showScore(value) {
+      const scoreText = document.createElement("h1");
+      scoreText.innerHTML =
+        Math.round(value * 100 * 100) / 100 + "% similarity!";
+      document.getElementById("words_div").appendChild(scoreText);
+    }
+  </script>
+  <style>
     #canvas_div {
-        text-align: center;
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
+      text-align: center;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     canvas {
-        border: 2px solid black;
+      border: 2px solid black;
     }
-
 
     .controls {
-        margin: 20px;
+      margin: 20px;
     }
-</style>
-
+  </style>
 </html>
