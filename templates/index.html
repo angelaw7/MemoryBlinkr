@@ -2,6 +2,10 @@
 
 <body>
     <div>
+        <button id="start_btn"> Start </button>
+    </div>
+    <div id="grid_container" class="hide">
+
         <div class="body-container">
             <h1> Grid Game</h1>
             <div id="start_box" class="start_box">
@@ -9,15 +13,15 @@
                 <button class="btn" id="start_btn">Start</button>
             </div>
             <div>
-                <div class="player_metrics hide">
+                <div id="player_metrics" class="player_metrics hide">
                     <div class="metric">
-                        <div class="metric_num">1</div>
+                        <div id="level" class="metric_num">1</div>
                         <div class="metric_text">Level</div>
                     </div>
-                    <div class="metric">
+                    <!-- <div class="metric">
                         <div class="metric_num">0</div>
                         <div class="metric_text">score</div>
-                    </div>
+                    </div> -->
                 </div>
                 <div id="grid_container" class="hide">
 
@@ -28,8 +32,20 @@
 </body>
 
 <script>
+    let grid_container = document.getElementById('grid_container')
+    const start_btn = document.getElementById('start_btn')
+    const grid_width = 500;
+
+    let level = 1
+    start_btn.addEventListener("click", (event) => {
+        start_btn.classList.add("hide")
+        newGame()
+        grid_container.classList.remove("hide")
+    })
+    const colors = ['white', 'black']
     let grid_container = document.getElementById("grid_container");
     const start_btn = document.getElementById("start_btn");
+    const player_metrics = document.getElementById("player_metrics");
     const grid_width = 500;
 
     // We start at level 1 and progressively move to higher levels
@@ -42,10 +58,11 @@
         newGame();
         // removing the class "hide" displays hidden elements
         grid_container.classList.remove("hide");
+        player_metrics.classList.remove('hide')
     });
 
     // Right now, the grid is just black and white. We can support multiple colors, if we want
-    const colors = ["white", "black"];
+    const colors = ["white", "black", "green", "red"];
 
     // We keep track of the random grid and the user's answers
     let original_grid = null;
@@ -53,6 +70,36 @@
 
     // This function generates a new random grid and starts the camera
     function newGame() {
+        const grid_size = level + 2
+        async function getGrid(url = '', data = {'grid_size': grid_size}) {
+            const response = await fetch(url, {
+                method: 'POST',
+                mode: 'cors',
+                cache: 'no-cache', 
+                credentials: 'same-origin', 
+                headers: {
+                'Content-Type': 'application/json'
+                },
+                redirect: 'follow',
+                referrerPolicy: 'no-referrer', 
+                body: JSON.stringify(data)
+            });
+            let grid = response.json()
+            return grid
+        }
+
+        getGrid('/get-grid').then(
+            data => {
+                currentGame(data)
+            }
+        )
+    }
+
+
+    function genID(i, j) {
+        return (i.toString()) + '-' + (j.toString())
+        const grid_container_el = document.getElementById('grid_container')
+        grid_container_el.innerHTML = ""
         const grid_size = level + 2;
         async function getGrid(url = "", data = { grid_size: grid_size }) {
             const response = await fetch(url, {
@@ -86,6 +133,48 @@
     // "grid" is an array of 1s and 0s (in case of black and white grid) and
     // converts these into colors for the html elements
     function generateGrid(grid) {
+        const grid_el = document.createElement('div')
+        grid_el.setAttribute("id", "grid")
+        const length = grid.length
+        for (let i = 0; i < length; i++) {
+            const row = document.createElement('div')
+            row.classList.add('row')
+            for (let j = 0; j < length; j++) {
+                const cell = document.createElement('div')
+                value_id = grid[i][j]
+                cell.style.backgroundColor = colors[value_id]
+                cell.classList.add('cell')
+                const cell_id = genID(i, j)
+                cell.setAttribute("id", cell_id)
+                cell.style.width = (grid_width / length).toString() + 'px'
+                cell.style.height = (grid_width / length).toString() + 'px'
+                row.appendChild(cell)
+            }
+            grid_el.appendChild(row)
+        }
+        return grid_el
+    }
+
+
+    let expected_grid = []
+    let blank_grid = []
+    const hasBlinked = false
+    function currentGame(grid) {
+        expected_grid = grid
+        const g = generateGrid(expected_grid)
+        grid_container.appendChild(g)
+
+        if (hasBlinked) {
+            const grid_el = document.getElementById('grid')
+            grid_el.addEventListener("click", (event) => {
+                target = event.target
+                target_id = target.id
+                let [i, j] = target_id.split('-')
+                i = parseInt(i), j = parseInt(j)
+                blank_grid[i][j] == 1 ? blank_grid[i][j] = 0 : blank_grid[i][j] = 1
+                target.style.backgroundColor = colors[blank_grid[i][j]]
+            })
+        }
         const grid_el = document.createElement("div");
         grid_el.setAttribute("id", "grid");
         const length = grid.length;
@@ -112,7 +201,7 @@
     let blank_grid = [];
     const hasBlinked = false;
 
-    // Since we expect to have multiple levels, we can use this function to start a new level
+    // Since we expect to have multiple levels, we keep track of currentLevel
     function currentGame(grid) {
         expected_grid = grid;
         const g = generateGrid(expected_grid);
@@ -138,9 +227,71 @@
         }
     }
 
+    function showFeedback(grid) {
+        console.log(grid)
+        len = grid.length
+        let count_wrong = 0
+        for (let i = 0; i < len; i++) {
+            for (let j = 0; j < len; j++) {
+                const element_id = genID(i, j)
+                element = document.getElementById(element_id)
+                element.style.backgroundColor = colors[grid[i][j]]
+                if (grid[i][j] == 3) {
+                    count_wrong += 1
+                }
+            }
+        }
+        const grid_el = document.getElementById('grid')
+        if (count_wrong) {
+            grid_el.classList.add('correct')
+            grid_el.classList.remove('wrong')
+            setTimeout(newGame, 500)
+        }
+        else {
+            grid_el.classList.add('wrong')
+            grid_el.classList.remove('correct')
+            setTimeout(nextLevel, 500)
+        }
+
+    }
+
+    function nextLevel() {
+        const grid_container_el = document.getElementById('grid_container')
+        grid_container_el.innerHTML = ""
+        newGame()
+        const lv = document.getElementById('level');
+        level += 1
+        console.log(lv.innerHTML)
+        lv.innerHTML = (level).toString()
+    }
+
     // handling blinking
     // We create a blank white grid that the player can fill in
     function blink() {
+        grid_container.innerHTML = ''
+        length = expected_grid.length
+        let blank_grid = []
+        for (let i = 0; i < length; i++) {
+            row = []
+            for (let j = 0; j < length; j++) {
+                row.push(0)
+            }
+            new_grid.push(row)
+        }
+        blank_grid = generateGrid(blank_grid)
+        grid_container.appendChild(blank_grid)
+    }
+
+    setTimeout(blink, 500)
+
+
+</script>
+
+<style>
+    #grid {
+        display: inline-grid;
+        border: 1px solid #eee;
+
         grid_container.innerHTML = "";
         length = expected_grid.length;
         let blank_grid = [];
@@ -175,37 +326,40 @@
         // compareGrid checks if the players result matches our expectations
         submitButton.addEventListener("click", () => {
             user_grid = blank_grid
-            let score = document.getElementById('score')
-            compareGrids().then((res) => {
-                score_val = parseInt(score.innerText) + res
-                score.innerHTML = score_val.toString()
-                console.log(res * 100); // score
-            });
+            compareGrids();
         });
 
-        async function compareGrids() {
-            console.log(original_grid, user_grid)
-            const data = { oldGrid: original_grid, newGrid: user_grid };
-            const res = await fetch("/compare-grids", {
-                method: "POST",
-                mode: "cors",
-                cache: "no-cache",
-                credentials: "same-origin",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                redirect: "follow",
-                referrerPolicy: "no-referrer",
-                body: JSON.stringify(data),
+        function compareGrids() {
+            async function compareGridsAsync() {
+                console.log(original_grid, user_grid)
+                const data = { oldGrid: original_grid, newGrid: user_grid };
+                const res = await fetch("/compare-grids", {
+                    method: "POST",
+                    mode: "cors",
+                    cache: "no-cache",
+                    credentials: "same-origin",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    redirect: "follow",
+                    referrerPolicy: "no-referrer",
+                    body: JSON.stringify(data),
+                });
+                return res.json();
+            }
+            compareGridsAsync().then((data) => {
+                console.log(data)
+
+                showFeedback(data)
             });
-            return res.json();
         }
     }
 </script>
 
 <style>
     body {
-        font-family: 'Courier New', Courier, monospace
+        font-family: 'Courier New', Courier, monospace;
+        background-color: #eee;
     }
 
     .body-container {
@@ -213,13 +367,12 @@
         flex-direction: column;
         justify-items: center;
         align-items: center;
+        margin-top: 100px;
     }
 
     .start-container {
         display: flex;
         justify-content: center;
-
-
     }
 
     button {
@@ -291,11 +444,17 @@
         margin: 0;
         padding: 0;
         border: 1px solid #eee;
-        cursor: crosshair;
+        cursor: crosshair
     }
 
     .hide {
         display: none;
+    }
+        cursor: crosshair;
+    }
+
+    .hide {
+        display: none !important;
     }
 
     .player_metrics {
@@ -318,6 +477,21 @@
 
     .metric_num {
         font-size: 2rem;
+    }
+
+    .correct {
+        border: 1px solid green;
+        box-shadow: inset 0 -3em 3em rgba(255, 0, 0, 0.1),
+            0 0 0 8px rgb(255, 255, 255),
+            0.5em 0.5em 1em rgba(255, 0, 0, 0.3);
+    }
+
+    .wrong {
+        border: 1px solid red;
+        box-shadow: inset 0 -3em 3em rgba(0, 255, 0, 0.1),
+            0 0 0 8px rgb(255, 255, 255),
+            0.5em 0.5em 1em rgba(0, 255, 0, 0.3);
+
     }
 </style>
 

@@ -31,15 +31,17 @@ def compareGrid(orig_arr, new_arr):
     i.e.
     """
     size = len(orig_arr)
-    comparison_arr = arr = [[0] * size for i in range(size)]
+    comparison_arr = [[0] * size for i in range(size)]
 
     for row in range(size):
         for col in range(size):
             if not new_arr[row][col] and not orig_arr[row][col]:
-                comparison_arr[row][col] = 0
+                comparison_arr[row][col] = 0 #white
+            elif not new_arr[row][col] and orig_arr[row][col]:
+                comparison_arr[row][col] = 1 #black
             elif new_arr[row][col] and orig_arr[row][col]:
-                comparison_arr[row][col] = 1
+                comparison_arr[row][col] = 2 #green
             else:
-                comparison_arr[row][col] = -1
+                comparison_arr[row][col] = 3 #red
 
     return comparison_arr

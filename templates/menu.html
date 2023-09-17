@@ -2,13 +2,16 @@
 
 <body>
     <div class="body-container">
+        <div>
+            <img src="static/logo.png" alt="logo" id="logo"/>
+        </div>
         <div id="title" class="fade-in-slow">MemoryBlinkr</div>
+
         <div class="start-container">
             <button class="btn" id="grid_btn"> Grid Game</button>
             <button class="btn" id="image_btn"> Image Game </button>
             <button class="btn" id="word_btn"> Phrase Game </button>
         </div>
-    </div>
     </div>
 
 </body>
@@ -33,7 +36,13 @@
 
 <style>
     body {
-        font-family: 'Courier New', Courier, monospace
+        font-family: 'Courier New', Courier, monospace;
+        background-color: #eee;
+    }
+
+    #logo {
+        width: 200px;
+        margin-top: 2in;
     }
 
     .body-container {
@@ -46,8 +55,6 @@
     .start-container {
         display: flex;
         justify-content: center;
-
-
     }
 
     button {
@@ -65,7 +72,7 @@
     }
 
     #title {
-        margin-top: 3in;
+        margin-top: 40px;
         margin-bottom: .25in;
         font-size: 96px;
         animation-name: fadeIn;
