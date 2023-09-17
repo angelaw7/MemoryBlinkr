@@ -70,8 +70,9 @@ def getPhrase():
 @app.route("/compare-phrases", methods=["POST"])
 def comparePhrases():
     data = request.get_json()
-    orig_phrase = data["original_phrases"]
-    user_phrase = data["user_phrases"]
+    orig_phrase = data["original_phrase"]
+    user_phrase = data["user_phrase"]
     score = wordsGame.comparePhrases(orig_phrase, user_phrase)
+    max_len = max(len(orig_phrase), len(user_phrase))
 
-    return {"score": score / (max(len(orig_phrase), len(user_phrase)))}
+    return {"score": (max_len - score) / max_len}

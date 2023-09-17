@@ -45,7 +45,4 @@ def generatePhrase(topic):
         max_tokens=100,
     )
 
-    list_of_generations = prediction.generations[0].split("\n")
-    list_of_phrases = [phrase.strip()[3:] for phrase in list_of_generations]
-
-    return list_of_phrases
+    return prediction.generations[0].strip()
