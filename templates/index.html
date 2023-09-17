@@ -151,7 +151,7 @@
                 const element_id = genID(i, j)
                 element = document.getElementById(element_id)
                 element.style.backgroundColor = colors[grid[i][j]]
-                if (grid[i][j] == 3) {
+                if (grid[i][j] == 1 || grid[i][j] == 3) {
                     count_wrong += 1
                 }
             }
