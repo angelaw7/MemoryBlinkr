@@ -1,7 +1,7 @@
 <html>
   <body>
     <div id="words_div" style="overflow-x: auto">
-      <label>Topic to study</label>
+      <label id="input-label">Topic to study</label>
       <input type="text" name="input" id="input" />
       <input type="button" id="submit" value="Go!" />
     </div>
@@ -9,6 +9,7 @@
 
   <script>
     const inputBox = document.getElementById("input");
+    const inputLabel = document.getElementById("input-label");
     const submitButton = document.getElementById("submit");
 
     let phrase = null;
@@ -42,6 +43,7 @@
 
     function showPhrase() {
       const phraseText = document.createElement("h2");
+      phraseText.id = "generated-phrase";
       phraseText.innerHTML = phrase;
       document.getElementById("words_div").appendChild(phraseText);
 
@@ -63,13 +65,18 @@
     }
 
     function blink() {
-      const phraseText = document.getElementsByClassName("h2");
-      //   phraseText.hide();
+      inputBox.style.display = "none";
+      inputLabel.style.display = "none";
+      submitButton.style.display = "none";
+
+      const phraseText = document.getElementById("generated-phrase");
+      phraseText.style.display = "none";
 
       const phraseInputBox = document.createElement("input");
       document.getElementById("words_div").appendChild(phraseInputBox);
 
       const phraseSubmitButton = document.createElement("input");
+      phraseSubmitButton.innerText = "Enter";
       phraseSubmitButton.type = "button";
       document.getElementById("words_div").appendChild(phraseSubmitButton);
 
@@ -102,7 +109,8 @@
 
     function showScore(value) {
       const scoreText = document.createElement("h1");
-      scoreText.innerHTML = Math.round(value * 100 * 100) / 100 + "% similarity!";
+      scoreText.innerHTML =
+        Math.round(value * 100 * 100) / 100 + "% similarity!";
       document.getElementById("words_div").appendChild(scoreText);
     }
   </script>
