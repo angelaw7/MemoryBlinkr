@@ -74,8 +74,8 @@ def compareGrids():
     """
     Compare the originally generated grid with the user submitted grid
     """
-    new_grid = request.get_json()
-    return jsonify(gridgame.compareGrid(old_grid, new_grid))
+    data = request.get_json()
+    return jsonify(gridgame.compareGrid(data['oldGrid'], data['newGrid']))
 
 @app.route("/compare-image", methods=["POST"])
 def compareImages():
