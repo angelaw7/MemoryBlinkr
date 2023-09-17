@@ -31,7 +31,7 @@ def compareGrid(orig_arr, new_arr):
     i.e.
     """
     size = len(orig_arr)
-    comparison_arr = arr = [[0] * size for i in range(size)]
+    comparison_arr = [[0] * size for i in range(size)]
 
     for row in range(size):
         for col in range(size):

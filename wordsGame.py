@@ -7,16 +7,15 @@ def comparePhrases(phrase1, phrase2):
     distance
     """
     n, m = len(phrase1), len(phrase2)
-    # Create an array of size nxm
+
     dp = [[0 for i in range(m + 1)] for j in range(n + 1)]
 
-    # Base Case: When N = 0
     for j in range(m + 1):
         dp[0][j] = j
-    # Base Case: When M = 0
+
     for i in range(n + 1):
         dp[i][0] = i
-    # Transitions
+
     for i in range(1, n + 1):
         for j in range(1, m + 1):
             if phrase1[i - 1] == phrase2[j - 1]:
