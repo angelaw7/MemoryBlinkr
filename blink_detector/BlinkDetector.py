@@ -15,15 +15,17 @@ class BlinkDetector:
         self.detector_faces = dlib.get_frontal_face_detector()
         self.predictor_eyes = dlib.shape_predictor(cfg.eye_landmarks)
 
+    def activate_cam(self):
+        self.vs = VideoStream(src=0).start()
+
     def start(self):
         COUNTER = 0
         TOTAL = 0
 
-        vs = VideoStream(src=0).start()
-        self.start_time = time.time() + 2
+        self.start_time = time.time()
 
         while True:
-            im = vs.read()
+            im = self.vs.read()
             im = cv2.flip(im, 1)
             im = imutils.resize(im, width=720)
             gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
@@ -49,7 +51,7 @@ class BlinkDetector:
             if cv2.waitKey(1) & 0xFF == ord("q"):
                 vs.stop()
                 break
-        vs.stop()
+        cv2.destroyAllWindows()
 
     def eye_blink(self, gray, rect, COUNTER, TOTAL):
         (lStart, lEnd) = face_utils.FACIAL_LANDMARKS_IDXS["left_eye"]
@@ -73,7 +75,7 @@ class BlinkDetector:
             COUNTER += 1
 
         else:
-            if COUNTER >= cfg.EYE_AR_CONSEC_FRAMES and time_diff > 2:
+            if COUNTER >= cfg.EYE_AR_CONSEC_FRAMES and time_diff > 1:
                 TOTAL += 1
                 self.start_time = time.time()
                 done = True

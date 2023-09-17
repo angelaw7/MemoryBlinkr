@@ -2,12 +2,15 @@
 
 <body>
     <div class="body-container">
+        <div>
+            <img src="static/logo.png" alt="logo" id="logo"/>
+        </div>
         <div id="title" class="fade-in-slow">MemoryBlinkr</div>
-        <div class="start-container ">
-            <button id="grid_btn"> Grid Game</button>
-            <button id="image_btn"> Image Game </button>
-            <button id="word_btn"> Word Game </button>
-            </div>
+
+        <div class="start-container">
+            <button class="btn" id="grid_btn"> Grid Game</button>
+            <button class="btn" id="image_btn"> Image Game </button>
+            <button class="btn" id="word_btn"> Phrase Game </button>
         </div>
     </div>
 
@@ -25,32 +28,38 @@
     };
 
     document.getElementById("word_btn").onclick = function () {
-        location.href = "word-game";
+        location.href = "phrase-game";
     };
 
 </script>
 
 
 <style>
-
-    body{
-        font-family: 'Courier New', Courier, monospace
+    body {
+        font-family: 'Courier New', Courier, monospace;
+        background-color: #eee;
     }
 
-    .body-container{
+    #logo {
+        width: 200px;
+        margin-top: 2in;
+    }
+
+    .body-container {
         display: flex;
         flex-direction: column;
         justify-items: center;
         align-items: center;
     }
 
-    .start-container{
+    .start-container {
         display: flex;
         justify-content: center;
     }
 
-    button{
-        background-color: #008080; /* Teal */
+    button {
+        background-color: #008080;
+        /* Teal */
         color: white;
         padding: 15px 32px;
         text-align: center;
@@ -59,45 +68,66 @@
         font-size: 16px;
         font-weight: 200;
         margin: 6px;
+        cursor:pointer;
     }
 
-    #title{
-        margin-top: 3in;
+    #title {
+        margin-top: 40px;
         margin-bottom: .25in;
         font-size: 96px;
         animation-name: fadeIn;
         animation-duration: 2s;
     }
 
-    #grid_btn{
+    #grid_btn {
         animation-name: fadeIn-alt;
         animation-duration: 3s;
 
     }
-    #image_btn{
+
+    #image_btn {
         animation-name: fadeIn-alt;
         animation-duration: 3.25s;
 
     }
-    #word_btn{
+
+    #word_btn {
         animation-name: fadeIn-alt;
         animation-duration: 3.5s;
 
     }
+    .btn {
+        cursor:pointer;
+    }
+    .btn:hover {
+        background-color: #333;
+        transition: 0.3s;
+        cursor:pointer;
+    }
 
     @keyframes fadeIn {
-        0%   {opacity: 0;}
-        100% {opacity: 1;}
+        0% {
+            opacity: 0;
+        }
+
+        100% {
+            opacity: 1;
+        }
     }
 
     @keyframes fadeIn-alt {
-        0%   {opacity: 0;}
-        30%  {opacity: 0;}
-        100% {opacity: 1;}
+        0% {
+            opacity: 0;
+        }
+
+        30% {
+            opacity: 0;
+        }
+
+        100% {
+            opacity: 1;
+        }
     }
-    
-
-
 </style>
 
 </html>
